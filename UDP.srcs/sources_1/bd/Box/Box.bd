@@ -1,0 +1,585 @@
+{
+  "design": {
+    "design_info": {
+      "boundary_crc": "0x2DB259442FF3F9C",
+      "device": "xc7z015clg485-1",
+      "name": "Box",
+      "synth_flow_mode": "Hierarchical",
+      "tool_version": "2019.1",
+      "validated": "true"
+    },
+    "design_tree": {
+      "clk_wiz_0": "",
+      "tri_mode_ethernet_mac_0": "",
+      "axis_data_fifo_0": "",
+      "ila_0": "",
+      "vio_0": "",
+      "util_vector_logic_0": "",
+      "ethernet_generator_0": ""
+    },
+    "ports": {
+      "clk_in1_n_0": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "Box_clk_in1_n_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.000",
+            "value_src": "default"
+          }
+        }
+      },
+      "clk_in1_p_0": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "Box_clk_in1_p_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.000",
+            "value_src": "default"
+          }
+        }
+      },
+      "CLK_125MHz_0": {
+        "type": "clk",
+        "direction": "O",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "Box_clk_wiz_0_0_CLK_125MHz",
+            "value_src": "default_prop"
+          },
+          "FREQ_HZ": {
+            "value": "125000000"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "ip_prop"
+          }
+        }
+      },
+      "rgmii_txd_0": {
+        "direction": "O",
+        "left": "3",
+        "right": "0"
+      },
+      "rgmii_tx_ctl_0": {
+        "direction": "O"
+      },
+      "rgmii_txc_0": {
+        "type": "clk",
+        "direction": "O",
+        "parameters": {
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.000",
+            "value_src": "default"
+          }
+        }
+      },
+      "rgmii_rx_ctl_0": {
+        "direction": "I"
+      },
+      "rgmii_rxc_0": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "Box_rgmii_rxc_0",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.000",
+            "value_src": "default"
+          }
+        }
+      },
+      "rgmii_rxd_0": {
+        "direction": "I",
+        "left": "3",
+        "right": "0"
+      }
+    },
+    "components": {
+      "clk_wiz_0": {
+        "vlnv": "xilinx.com:ip:clk_wiz:6.0",
+        "xci_name": "Box_clk_wiz_0_0",
+        "parameters": {
+          "CLKIN1_JITTER_PS": {
+            "value": "64.0"
+          },
+          "CLKOUT1_JITTER": {
+            "value": "186.558"
+          },
+          "CLKOUT1_PHASE_ERROR": {
+            "value": "204.239"
+          },
+          "CLKOUT1_REQUESTED_OUT_FREQ": {
+            "value": "125"
+          },
+          "CLKOUT2_JITTER": {
+            "value": "194.337"
+          },
+          "CLKOUT2_PHASE_ERROR": {
+            "value": "204.239"
+          },
+          "CLKOUT2_USED": {
+            "value": "true"
+          },
+          "CLK_OUT1_PORT": {
+            "value": "CLK_125MHz"
+          },
+          "CLK_OUT2_PORT": {
+            "value": "CLK_100MHz"
+          },
+          "MMCM_CLKFBOUT_MULT_F": {
+            "value": "32.000"
+          },
+          "MMCM_CLKIN1_PERIOD": {
+            "value": "6.400"
+          },
+          "MMCM_CLKOUT0_DIVIDE_F": {
+            "value": "8.000"
+          },
+          "MMCM_CLKOUT1_DIVIDE": {
+            "value": "10"
+          },
+          "MMCM_DIVCLK_DIVIDE": {
+            "value": "5"
+          },
+          "NUM_OUT_CLKS": {
+            "value": "2"
+          },
+          "PRIM_IN_FREQ": {
+            "value": "156.25"
+          },
+          "PRIM_SOURCE": {
+            "value": "Differential_clock_capable_pin"
+          }
+        }
+      },
+      "tri_mode_ethernet_mac_0": {
+        "vlnv": "xilinx.com:ip:tri_mode_ethernet_mac:9.0",
+        "xci_name": "Box_tri_mode_ethernet_mac_0_0",
+        "parameters": {
+          "Management_Frequency": {
+            "value": "125.00"
+          },
+          "Physical_Interface": {
+            "value": "RGMII"
+          },
+          "SupportLevel": {
+            "value": "1"
+          }
+        }
+      },
+      "axis_data_fifo_0": {
+        "vlnv": "xilinx.com:ip:axis_data_fifo:2.0",
+        "xci_name": "Box_axis_data_fifo_0_0",
+        "parameters": {
+          "HAS_TLAST": {
+            "value": "1"
+          },
+          "HAS_WR_DATA_COUNT": {
+            "value": "1"
+          }
+        }
+      },
+      "ila_0": {
+        "vlnv": "xilinx.com:ip:ila:6.2",
+        "xci_name": "Box_ila_0_4",
+        "parameters": {
+          "C_ENABLE_ILA_AXI_MON": {
+            "value": "false"
+          },
+          "C_MONITOR_TYPE": {
+            "value": "Native"
+          },
+          "C_NUM_OF_PROBES": {
+            "value": "16"
+          },
+          "C_PROBE0_WIDTH": {
+            "value": "8"
+          },
+          "C_PROBE10_WIDTH": {
+            "value": "32"
+          },
+          "C_PROBE11_WIDTH": {
+            "value": "1"
+          },
+          "C_PROBE14_WIDTH": {
+            "value": "32"
+          },
+          "C_PROBE4_WIDTH": {
+            "value": "6"
+          },
+          "C_PROBE6_WIDTH": {
+            "value": "8"
+          }
+        }
+      },
+      "vio_0": {
+        "vlnv": "xilinx.com:ip:vio:3.0",
+        "xci_name": "Box_vio_0_0",
+        "parameters": {
+          "C_NUM_PROBE_IN": {
+            "value": "0"
+          },
+          "C_NUM_PROBE_OUT": {
+            "value": "2"
+          }
+        }
+      },
+      "util_vector_logic_0": {
+        "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
+        "xci_name": "Box_util_vector_logic_0_0",
+        "parameters": {
+          "C_OPERATION": {
+            "value": "not"
+          },
+          "C_SIZE": {
+            "value": "1"
+          }
+        }
+      },
+      "ethernet_generator_0": {
+        "vlnv": "xilinx.com:module_ref:ethernet_generator:1.0",
+        "xci_name": "Box_ethernet_generator_0_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "ethernet_generator",
+          "boundary_crc": "0x0"
+        },
+        "interface_ports": {
+          "interface_axis": {
+            "mode": "Master",
+            "vlnv": "xilinx.com:interface:axis_rtl:1.0",
+            "parameters": {
+              "CLK_DOMAIN": {
+                "value": "Box_clk_wiz_0_0_CLK_125MHz",
+                "value_src": "default_prop"
+              },
+              "FREQ_HZ": {
+                "value": "125000000",
+                "value_src": "ip_prop"
+              },
+              "HAS_TKEEP": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "HAS_TLAST": {
+                "value": "1",
+                "value_src": "constant"
+              },
+              "HAS_TREADY": {
+                "value": "1",
+                "value_src": "constant"
+              },
+              "HAS_TSTRB": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "PHASE": {
+                "value": "0.0",
+                "value_src": "ip_prop"
+              },
+              "TDATA_NUM_BYTES": {
+                "value": "1",
+                "value_src": "constant"
+              },
+              "TDEST_WIDTH": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "TID_WIDTH": {
+                "value": "0",
+                "value_src": "constant"
+              },
+              "TUSER_WIDTH": {
+                "value": "0",
+                "value_src": "constant"
+              }
+            },
+            "port_maps": {
+              "TDATA": {
+                "physical_name": "tdata",
+                "direction": "O",
+                "left": "7",
+                "right": "0"
+              },
+              "TLAST": {
+                "physical_name": "tlast",
+                "direction": "O"
+              },
+              "TVALID": {
+                "physical_name": "tvalid",
+                "direction": "O"
+              },
+              "TREADY": {
+                "physical_name": "tready",
+                "direction": "I"
+              }
+            }
+          }
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_BUSIF": {
+                "value": "interface_axis",
+                "value_src": "constant"
+              },
+              "ASSOCIATED_RESET": {
+                "value": "reset",
+                "value_src": "constant"
+              },
+              "CLK_DOMAIN": {
+                "value": "Box_clk_wiz_0_0_CLK_125MHz",
+                "value_src": "default_prop"
+              },
+              "FREQ_HZ": {
+                "value": "125000000",
+                "value_src": "ip_prop"
+              },
+              "PHASE": {
+                "value": "0.0",
+                "value_src": "ip_prop"
+              }
+            }
+          },
+          "reset": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "count": {
+            "direction": "O",
+            "left": "5",
+            "right": "0"
+          }
+        }
+      }
+    },
+    "nets": {
+      "clk_in1_n_0_1": {
+        "ports": [
+          "clk_in1_n_0",
+          "clk_wiz_0/clk_in1_n"
+        ]
+      },
+      "clk_in1_p_0_1": {
+        "ports": [
+          "clk_in1_p_0",
+          "clk_wiz_0/clk_in1_p"
+        ]
+      },
+      "clk_wiz_0_CLK_125MHz": {
+        "ports": [
+          "clk_wiz_0/CLK_125MHz",
+          "CLK_125MHz_0",
+          "tri_mode_ethernet_mac_0/gtx_clk",
+          "tri_mode_ethernet_mac_0/refclk",
+          "tri_mode_ethernet_mac_0/s_axi_aclk",
+          "axis_data_fifo_0/s_axis_aclk",
+          "ila_0/clk",
+          "vio_0/clk",
+          "ethernet_generator_0/clk"
+        ]
+      },
+      "tri_mode_ethernet_mac_0_rgmii_txd": {
+        "ports": [
+          "tri_mode_ethernet_mac_0/rgmii_txd",
+          "rgmii_txd_0"
+        ]
+      },
+      "tri_mode_ethernet_mac_0_rgmii_tx_ctl": {
+        "ports": [
+          "tri_mode_ethernet_mac_0/rgmii_tx_ctl",
+          "rgmii_tx_ctl_0"
+        ]
+      },
+      "tri_mode_ethernet_mac_0_rgmii_txc": {
+        "ports": [
+          "tri_mode_ethernet_mac_0/rgmii_txc",
+          "rgmii_txc_0"
+        ]
+      },
+      "rgmii_rx_ctl_0_1": {
+        "ports": [
+          "rgmii_rx_ctl_0",
+          "tri_mode_ethernet_mac_0/rgmii_rx_ctl"
+        ]
+      },
+      "rgmii_rxc_0_1": {
+        "ports": [
+          "rgmii_rxc_0",
+          "tri_mode_ethernet_mac_0/rgmii_rxc"
+        ]
+      },
+      "rgmii_rxd_0_1": {
+        "ports": [
+          "rgmii_rxd_0",
+          "tri_mode_ethernet_mac_0/rgmii_rxd"
+        ]
+      },
+      "ethernet_generator_0_tdata": {
+        "ports": [
+          "ethernet_generator_0/tdata",
+          "axis_data_fifo_0/s_axis_tdata",
+          "ila_0/probe0"
+        ]
+      },
+      "ethernet_generator_0_tlast": {
+        "ports": [
+          "ethernet_generator_0/tlast",
+          "axis_data_fifo_0/s_axis_tlast",
+          "ila_0/probe1"
+        ]
+      },
+      "axis_data_fifo_0_s_axis_tready": {
+        "ports": [
+          "axis_data_fifo_0/s_axis_tready",
+          "ila_0/probe3",
+          "ethernet_generator_0/tready"
+        ]
+      },
+      "axis_data_fifo_0_m_axis_tdata": {
+        "ports": [
+          "axis_data_fifo_0/m_axis_tdata",
+          "tri_mode_ethernet_mac_0/tx_axis_mac_tdata",
+          "ila_0/probe6"
+        ]
+      },
+      "axis_data_fifo_0_m_axis_tlast": {
+        "ports": [
+          "axis_data_fifo_0/m_axis_tlast",
+          "tri_mode_ethernet_mac_0/tx_axis_mac_tlast",
+          "ila_0/probe7"
+        ]
+      },
+      "axis_data_fifo_0_m_axis_tvalid": {
+        "ports": [
+          "axis_data_fifo_0/m_axis_tvalid",
+          "tri_mode_ethernet_mac_0/tx_axis_mac_tvalid",
+          "ila_0/probe9"
+        ]
+      },
+      "ethernet_generator_0_tvalid": {
+        "ports": [
+          "ethernet_generator_0/tvalid",
+          "axis_data_fifo_0/s_axis_tvalid",
+          "ila_0/probe2"
+        ]
+      },
+      "ethernet_generator_0_count": {
+        "ports": [
+          "ethernet_generator_0/count",
+          "ila_0/probe4"
+        ]
+      },
+      "axis_data_fifo_0_axis_wr_data_count": {
+        "ports": [
+          "axis_data_fifo_0/axis_wr_data_count",
+          "ila_0/probe10"
+        ]
+      },
+      "vio_0_probe_out0": {
+        "ports": [
+          "vio_0/probe_out0",
+          "tri_mode_ethernet_mac_0/s_axi_resetn",
+          "tri_mode_ethernet_mac_0/glbl_rstn",
+          "tri_mode_ethernet_mac_0/rx_axi_rstn",
+          "tri_mode_ethernet_mac_0/tx_axi_rstn",
+          "axis_data_fifo_0/s_axis_aresetn",
+          "util_vector_logic_0/Op1",
+          "ila_0/probe5"
+        ]
+      },
+      "util_vector_logic_0_Res": {
+        "ports": [
+          "util_vector_logic_0/Res",
+          "ethernet_generator_0/reset"
+        ]
+      },
+      "tri_mode_ethernet_mac_0_tx_mac_aclk": {
+        "ports": [
+          "tri_mode_ethernet_mac_0/tx_mac_aclk",
+          "ila_0/probe11"
+        ]
+      },
+      "tri_mode_ethernet_mac_0_tx_reset": {
+        "ports": [
+          "tri_mode_ethernet_mac_0/tx_reset",
+          "ila_0/probe12"
+        ]
+      },
+      "tri_mode_ethernet_mac_0_tx_enable": {
+        "ports": [
+          "tri_mode_ethernet_mac_0/tx_enable",
+          "ila_0/probe13",
+          "ila_0/probe8"
+        ]
+      },
+      "tri_mode_ethernet_mac_0_tx_statistics_vector": {
+        "ports": [
+          "tri_mode_ethernet_mac_0/tx_statistics_vector",
+          "ila_0/probe14"
+        ]
+      },
+      "tri_mode_ethernet_mac_0_tx_axis_mac_tready": {
+        "ports": [
+          "tri_mode_ethernet_mac_0/tx_axis_mac_tready",
+          "ila_0/probe15",
+          "axis_data_fifo_0/m_axis_tready"
+        ]
+      },
+      "vio_0_probe_out1": {
+        "ports": [
+          "vio_0/probe_out1",
+          "tri_mode_ethernet_mac_0/tx_axis_mac_tuser"
+        ]
+      }
+    }
+  }
+}
