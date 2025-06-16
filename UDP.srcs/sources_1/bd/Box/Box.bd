@@ -14,8 +14,8 @@
       "axis_data_fifo_0": "",
       "ila_0": "",
       "vio_0": "",
-      "util_vector_logic_0": "",
-      "ethernet_generator_0": ""
+      "ethernet_generator_0": "",
+      "IP_0": ""
     },
     "ports": {
       "clk_in1_n_0": {
@@ -266,19 +266,13 @@
             "value": "0"
           },
           "C_NUM_PROBE_OUT": {
-            "value": "2"
-          }
-        }
-      },
-      "util_vector_logic_0": {
-        "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
-        "xci_name": "Box_util_vector_logic_0_0",
-        "parameters": {
-          "C_OPERATION": {
-            "value": "not"
+            "value": "4"
           },
-          "C_SIZE": {
-            "value": "1"
+          "C_PROBE_OUT2_WIDTH": {
+            "value": "32"
+          },
+          "C_PROBE_OUT3_WIDTH": {
+            "value": "32"
           }
         }
       },
@@ -393,10 +387,79 @@
             "type": "rst",
             "direction": "I"
           },
+          "startIP": {
+            "direction": "I"
+          },
+          "busIP": {
+            "direction": "I",
+            "left": "7",
+            "right": "0"
+          },
+          "enIP": {
+            "direction": "O"
+          },
           "count": {
             "direction": "O",
             "left": "5",
             "right": "0"
+          }
+        }
+      },
+      "IP_0": {
+        "vlnv": "xilinx.com:module_ref:IP:1.0",
+        "xci_name": "Box_IP_0_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "IP",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "rst",
+                "value_src": "constant"
+              },
+              "CLK_DOMAIN": {
+                "value": "Box_clk_wiz_0_0_CLK_125MHz",
+                "value_src": "default_prop"
+              },
+              "FREQ_HZ": {
+                "value": "125000000",
+                "value_src": "ip_prop"
+              },
+              "PHASE": {
+                "value": "0.0",
+                "value_src": "ip_prop"
+              }
+            }
+          },
+          "rst": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "enable": {
+            "direction": "I"
+          },
+          "srcIP": {
+            "direction": "I",
+            "left": "31",
+            "right": "0"
+          },
+          "dstIP": {
+            "direction": "I",
+            "left": "31",
+            "right": "0"
+          },
+          "busIP": {
+            "direction": "O",
+            "left": "7",
+            "right": "0"
+          },
+          "start": {
+            "direction": "O"
           }
         }
       }
@@ -424,7 +487,8 @@
           "axis_data_fifo_0/s_axis_aclk",
           "ila_0/clk",
           "vio_0/clk",
-          "ethernet_generator_0/clk"
+          "ethernet_generator_0/clk",
+          "IP_0/clk"
         ]
       },
       "tri_mode_ethernet_mac_0_rgmii_txd": {
@@ -532,13 +596,8 @@
           "tri_mode_ethernet_mac_0/rx_axi_rstn",
           "tri_mode_ethernet_mac_0/tx_axi_rstn",
           "axis_data_fifo_0/s_axis_aresetn",
-          "util_vector_logic_0/Op1",
-          "ila_0/probe5"
-        ]
-      },
-      "util_vector_logic_0_Res": {
-        "ports": [
-          "util_vector_logic_0/Res",
+          "ila_0/probe5",
+          "IP_0/rst",
           "ethernet_generator_0/reset"
         ]
       },
@@ -578,6 +637,36 @@
         "ports": [
           "vio_0/probe_out1",
           "tri_mode_ethernet_mac_0/tx_axis_mac_tuser"
+        ]
+      },
+      "IP_0_busIP": {
+        "ports": [
+          "IP_0/busIP",
+          "ethernet_generator_0/busIP"
+        ]
+      },
+      "IP_0_start": {
+        "ports": [
+          "IP_0/start",
+          "ethernet_generator_0/startIP"
+        ]
+      },
+      "ethernet_generator_0_enIP": {
+        "ports": [
+          "ethernet_generator_0/enIP",
+          "IP_0/enable"
+        ]
+      },
+      "vio_0_probe_out2": {
+        "ports": [
+          "vio_0/probe_out2",
+          "IP_0/srcIP"
+        ]
+      },
+      "vio_0_probe_out3": {
+        "ports": [
+          "vio_0/probe_out3",
+          "IP_0/dstIP"
         ]
       }
     }

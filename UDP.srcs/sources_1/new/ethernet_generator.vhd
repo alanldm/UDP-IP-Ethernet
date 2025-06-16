@@ -6,10 +6,13 @@ entity ethernet_generator is
     Port ( 
         clk : in std_logic;                          -- System clock input (125 MHz for Ethernet)
         reset : in std_logic;                        -- Synchronous reset (active low)
+        startIP : in std_logic;
+        busIP : in std_logic_vector(7 downto 0);
         tready : in std_logic;                       -- Downstream ready signal (AXI-Stream handshake)
         tdata : out std_logic_vector(7 downto 0);    -- Output data byte (AXI-Stream bus)
         tvalid : out std_logic;                      -- Data valid signal (AXI-Stream handshake)
         tlast : out std_logic;                       -- Indicates the last byte of a packet/frame (AXI-Stream)
+        enIP : out std_logic;
         count : out std_logic_vector(5 downto 0)     -- Debug: byte counter (sent bytes)
     );
 end ethernet_generator;
@@ -40,7 +43,8 @@ type FSM is (
     IDLE, 
     DEST_MAC, 
     SRC_MAC, 
-    TYPE_FIELD, 
+    TYPE_FIELD,
+    ENABLE_IP,
     DATA, 
     PADDING, 
     DONE
@@ -49,13 +53,11 @@ signal state, next_state : FSM := IDLE;                                 -- Curre
 
 type mac_array is array (0 to 5) of std_logic_vector(7 downto 0);       -- MAC address type (6 Bytes)
 type type_array is array (0 to 1) of std_logic_vector(7 downto 0);      -- Protocol type (2 Bytes)
-type payload_array is array (0 to 7) of std_logic_vector(7 downto 0);   -- Data type (8 Bytes)
 
 signal counter : integer := 0;
 signal destination_mac : mac_array := (x"FF", x"FF", x"FF", x"FF", x"FF", x"FF");
 signal source_mac : mac_array := (x"00", x"0A", x"35", x"00", x"00", x"01");
 signal ethernet_type : type_array := (x"08", x"00");
-signal payload : payload_array := (x"B5", x"00",x"00", x"00", x"00", x"00", x"00", x"00");
 
 begin
 
@@ -72,7 +74,7 @@ inst_timer : timer generic map (1250) port map (
 process (clk)
 begin
     if (rising_edge(clk)) then
-        if (reset = '1') then
+        if (reset = '0') then
             state <= IDLE;
         else
             state <= next_state;
@@ -106,12 +108,18 @@ begin
             end if;
         when TYPE_FIELD =>
             if (tready = '1' and counter = 1) then
-                next_state <= DATA;
+                next_state <= ENABLE_IP;
             else
                 next_state <= TYPE_FIELD;
             end if;
+        when ENABLE_IP =>
+            if (tready = '1' and startIP = '1') then
+                next_state <= DATA;
+            else
+                next_state <= ENABLE_IP;
+            end if;
         when DATA =>
-            if (tready = '1' and counter = 7) then
+            if (tready = '1' and startIP = '0') then
                 next_state <= PADDING;
             else
                 next_state <= DATA;
@@ -134,11 +142,12 @@ end process;
 process(clk)
 begin
     if (rising_edge(clk)) then
-        if (reset = '1') then
+        if (reset = '0') then
             tvalid <= '0';
             tdata <= (others => '0');
             tlast <= '0';
             counter <= 0;
+            enIP <= '0';
             
             enable_s <= '0';
             rst_s <= '0';
@@ -149,6 +158,7 @@ begin
                     tdata <= (others => '0');
                     tlast <= '0';
                     counter <= 0;
+                    enIP <= '0';
                     
                     enable_s <= '1';
                     rst_s <= '1';
@@ -156,6 +166,7 @@ begin
                     tvalid <= '1';
                     tdata <= destination_mac(counter);
                     tlast <= '0';
+                    enIP <= '0';
                     
                     if (counter = 5) then
                         counter <= 0;
@@ -169,6 +180,7 @@ begin
                     tvalid <= '1';
                     tdata <= source_mac(counter);
                     tlast <= '0';
+                    enIP <= '0';
                     
                     if (counter = 5) then
                         counter <= 0;
@@ -182,6 +194,7 @@ begin
                     tvalid <= '1';
                     tdata <= ethernet_type(counter);
                     tlast <= '0';
+                    enIP <= '0';
                     
                     if (counter = 1) then
                         counter <= 0;
@@ -191,22 +204,28 @@ begin
                     
                     enable_s <= '0';
                     rst_s <= '0';
+                when ENABLE_IP =>
+                    tvalid <= '0';
+                    tdata <= (others => '0');
+                    tlast <= '0';
+                    enIP <= '1';
+                    counter <= 0;
+                    
+                    enable_s <= '0';
+                    rst_s <= '0';
                 when DATA =>
                     tvalid <= '1';
-                    tdata <= payload(counter);
+                    tdata <= busIP;
                     tlast <= '0';
-                    
-                    if (counter = 7) then
-                        counter <= 0;
-                    else
-                        counter <= counter + 1;
-                    end if;
+                    enIP <= '1';
+                    counter <= 0;
                     
                     enable_s <= '0';
                     rst_s <= '0';
                 when PADDING =>
                     tvalid <= '1';
                     tdata <= x"00";
+                    enIP <= '0';
                     
                     if (counter = 63) then
                         tlast <= '1';
@@ -223,6 +242,7 @@ begin
                     tdata <= (others => '0');
                     tlast <= '0';
                     counter <= 0;
+                    enIP <= '0';
                     
                     enable_s <= '0';
                     rst_s <= '0';
@@ -231,6 +251,7 @@ begin
                     tdata <= (others => '0');
                     tlast <= '0';
                     counter <= 0;
+                    enIP <= '0';
                     
                     enable_s <= '0';
                     rst_s <= '0';
@@ -239,6 +260,7 @@ begin
             tvalid <= '0';
             tdata <= (others => '0');
             tlast <= '0';
+            enIP <= '0';
             
             enable_s <= '0';
             rst_s <= '0';
