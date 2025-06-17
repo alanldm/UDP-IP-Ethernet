@@ -495,7 +495,15 @@
           "prtcl_en": {
             "direction": "O"
           },
-          "count": {
+          "start_dbg": {
+            "direction": "O"
+          },
+          "state_dbg": {
+            "direction": "O",
+            "left": "3",
+            "right": "0"
+          },
+          "count_dbg": {
             "direction": "O",
             "left": "5",
             "right": "0"
@@ -578,7 +586,7 @@
       },
       "ethernet_generator_0_count": {
         "ports": [
-          "ethernet_generator_0/count",
+          "ethernet_generator_0/count_dbg",
           "ila_0/probe4"
         ]
       },
