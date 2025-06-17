@@ -1,0 +1,14 @@
+UDP.cache/
+UDP.hw/
+UDP.ip_user_files/
+UDP.runs/
+UDP.xpr
+*.jou
+*.log
+*.str
+.Xil/
+*.zip
+
+UDP.srcs/sources_1/bd/Box/*
+!UDP.srcs/sources_1/bd/Box/*.bd
+!UDP.srcs/sources_1/bd/Box/hdl/
