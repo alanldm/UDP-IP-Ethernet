@@ -29,6 +29,7 @@ type FSM is (
     CHECKSUM,
     SOURCE_IP,
     DESTINATION_IP,
+    DATA,
     RESET,
     DONE
 );
@@ -52,6 +53,7 @@ constant state_code : state_code_array := (
     CHECKSUM        => "01010",
     SOURCE_IP       => "01011",
     DESTINATION_IP  => "01100",
+    DATA            => "10000",
     RESET           => "01101",
     DONE            => "01111",
     others          => "00000"
@@ -60,6 +62,9 @@ constant state_code : state_code_array := (
 type twoBytes is array (0 to two_bytes-1) of std_logic_vector (7 downto 0);
 type fourBytes is array (0 to ip_length-1) of std_logic_vector (7 downto 0);
 
+type udp is array (0 to 18) of std_logic_vector(7 downto 0);
+signal udp_s : udp := (x"04", x"D2", x"16", x"78", x"00", x"1E", x"00", x"00", x"48", x"65", x"6C", x"6C", x"6F", x"20", x"57", x"6F", x"72", x"6C", x"64");
+
 signal version_s : std_logic_vector (7 downto 0) := x"45";
 signal service_s : std_logic_vector (7 downto 0) := x"00";
 signal length_s : twoBytes := (x"00", x"32");
@@ -67,7 +72,7 @@ signal id_s : twoBytes := (x"00", x"01");
 signal flag_s : twoBytes := (x"40", x"00");
 signal ttl_s : std_logic_vector (7 downto 0) := x"40";
 signal protocol_s : std_logic_vector (7 downto 0) := x"11";
-signal checksum_s : twoBytes := (x"AA", x"BB");
+signal checksum_s : twoBytes := (x"B7", x"59");
 signal src_ip_s : fourBytes;
 signal dst_ip_s : fourBytes; 
 
@@ -127,10 +132,16 @@ begin
             end if;            
         when DESTINATION_IP =>
             if (counter = ip_length-1) then
-                next_state <= DONE;
+                next_state <= DATA;
             else
                 next_state <= DESTINATION_IP;
-            end if;            
+            end if;
+        when DATA =>
+            if (counter = 18) then
+                next_state <= DONE;
+            else
+                next_state <= DATA;
+            end if;         
         when DONE => next_state <= START;
         when RESET => next_state <= START;
         when OTHERS => next_state <= START;
@@ -163,13 +174,13 @@ begin
                 when PROTOCOL => data_out <= protocol_s;                    
                 when CHECKSUM => data_out <= checksum_s(counter);
                 when SOURCE_IP => data_out <= src_ip_s(counter);
-                when DESTINATION_IP =>
-                    data_out <= dst_ip_s(counter);
+                when DESTINATION_IP => data_out <= dst_ip_s(counter);
+                when DATA =>
+                    data_out <= udp_s(counter);
                     
-                    if (counter = ip_length-1) then
+                    if (counter = 18) then
                         on_off <= '0';
                     end if;
-                    
                 when DONE =>
                     on_off <= '0';
                     valid <= '0';
@@ -205,6 +216,12 @@ if (rising_edge(clk)) then
                 end if;
             when SOURCE_IP | DESTINATION_IP =>
                 if (counter = ip_length-1) then
+                    counter <= 0;
+                else
+                    counter <= counter + 1;
+                end if;
+            when DATA =>
+                if (counter = 18) then
                     counter <= 0;
                 else
                     counter <= counter + 1;

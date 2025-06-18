@@ -26,7 +26,7 @@ end ethernet_generator;
 architecture Behavioral of ethernet_generator is
 constant mac_length : integer := 6;
 constant type_field_length : integer := 2;
-constant padding_length : integer := 64;
+constant padding_length : integer := 11;
 type mac_array is array (0 to mac_length-1) of std_logic_vector(7 downto 0);
 type type_array is array (0 to type_field_length-1) of std_logic_vector(7 downto 0);
 
