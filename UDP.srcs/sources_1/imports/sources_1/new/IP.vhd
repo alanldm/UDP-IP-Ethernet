@@ -6,11 +6,15 @@ entity IP is
         clk : in std_logic;
         rst : in std_logic;
         en : in std_logic;
+        prtcl_on_off : in std_logic;
+        prtcl_valid : in std_logic;
         src_ip : in std_logic_vector(31 downto 0);
         dst_ip : in std_logic_vector(31 downto 0);
+        data_in : in std_logic_vector(7 downto 0);
         data_out : out std_logic_vector(7 downto 0);
         on_off : out std_logic;
         valid : out std_logic;
+        prtcl_en : out std_logic;
         state_dbg : out std_logic_vector(4 downto 0)
     );
 end IP;
@@ -29,6 +33,7 @@ type FSM is (
     CHECKSUM,
     SOURCE_IP,
     DESTINATION_IP,
+    ENABLE_PROTOCOL,
     DATA,
     RESET,
     DONE
@@ -53,17 +58,15 @@ constant state_code : state_code_array := (
     CHECKSUM        => "01010",
     SOURCE_IP       => "01011",
     DESTINATION_IP  => "01100",
-    DATA            => "10000",
-    RESET           => "01101",
-    DONE            => "01111",
+    ENABLE_PROTOCOL => "01101",
+    DATA            => "01110",
+    RESET           => "01111",
+    DONE            => "10000",
     others          => "00000"
 );
 
 type twoBytes is array (0 to two_bytes-1) of std_logic_vector (7 downto 0);
 type fourBytes is array (0 to ip_length-1) of std_logic_vector (7 downto 0);
-
-type udp is array (0 to 18) of std_logic_vector(7 downto 0);
-signal udp_s : udp := (x"04", x"D2", x"16", x"78", x"00", x"1E", x"00", x"00", x"48", x"65", x"6C", x"6C", x"6F", x"20", x"57", x"6F", x"72", x"6C", x"64");
 
 signal version_s : std_logic_vector (7 downto 0) := x"45";
 signal service_s : std_logic_vector (7 downto 0) := x"00";
@@ -132,12 +135,18 @@ begin
             end if;            
         when DESTINATION_IP =>
             if (counter = ip_length-1) then
-                next_state <= DATA;
+                next_state <= ENABLE_PROTOCOL;
             else
                 next_state <= DESTINATION_IP;
             end if;
+        when ENABLE_PROTOCOL =>
+            if (prtcl_on_off = '1') then
+                next_state <= DATA;
+            else
+                next_state <= ENABLE_PROTOCOL;
+            end if;
         when DATA =>
-            if (counter = 18) then
+            if (prtcl_on_off = '0') then
                 next_state <= DONE;
             else
                 next_state <= DATA;
@@ -154,6 +163,7 @@ begin
         if (en = '1') then
             on_off <= '1';
             valid <= '1';
+            prtcl_en <= '0';
             data_out <= (others => '0');
             
             case state is
@@ -175,10 +185,15 @@ begin
                 when CHECKSUM => data_out <= checksum_s(counter);
                 when SOURCE_IP => data_out <= src_ip_s(counter);
                 when DESTINATION_IP => data_out <= dst_ip_s(counter);
+                when ENABLE_PROTOCOL =>
+                    valid <= '0';
+                    prtcl_en <= '1';
                 when DATA =>
-                    data_out <= udp_s(counter);
+                    prtcl_en <= '1';
+                    valid <= prtcl_valid;
+                    data_out <= data_in;
                     
-                    if (counter = 18) then
+                    if (prtcl_on_off = '0') then
                         on_off <= '0';
                     end if;
                 when DONE =>
