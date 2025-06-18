@@ -7,6 +7,7 @@ entity ethernet_generator is
         clk : in std_logic;
         rst : in std_logic;
         prtcl_on_off : in std_logic;
+        prtcl_valid : in std_logic;
         src_mac : in std_logic_vector(47 downto 0);
         dst_mac : in std_logic_vector(47 downto 0);
         prtcl_type : in std_logic_vector (15 downto 0);
@@ -212,7 +213,7 @@ begin
                     tdata <= (others => '0');
                     
                 when DATA =>
-                    tvalid <= '1';
+                    tvalid <= prtcl_valid;
                     prtcl_en <= '1';
                     tdata <= data_in;
                     

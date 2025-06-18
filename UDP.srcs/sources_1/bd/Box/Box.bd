@@ -9,13 +9,13 @@
       "validated": "true"
     },
     "design_tree": {
-      "IP_0": "",
       "axis_data_fifo_0": "",
       "clk_wiz_0": "",
       "ila_0": "",
       "tri_mode_ethernet_mac_0": "",
       "vio_0": "",
-      "ethernet_generator_0": ""
+      "ethernet_generator_0": "",
+      "IP_0": ""
     },
     "ports": {
       "CLK_125MHz_0": {
@@ -141,64 +141,6 @@
       }
     },
     "components": {
-      "IP_0": {
-        "vlnv": "xilinx.com:module_ref:IP:1.0",
-        "xci_name": "Box_IP_0_0",
-        "reference_info": {
-          "ref_type": "hdl",
-          "ref_name": "IP",
-          "boundary_crc": "0x0"
-        },
-        "ports": {
-          "clk": {
-            "type": "clk",
-            "direction": "I",
-            "parameters": {
-              "ASSOCIATED_RESET": {
-                "value": "rst",
-                "value_src": "constant"
-              },
-              "CLK_DOMAIN": {
-                "value": "Box_clk_wiz_0_0_CLK_125MHz",
-                "value_src": "default_prop"
-              },
-              "FREQ_HZ": {
-                "value": "125000000",
-                "value_src": "ip_prop"
-              },
-              "PHASE": {
-                "value": "0.0",
-                "value_src": "ip_prop"
-              }
-            }
-          },
-          "rst": {
-            "type": "rst",
-            "direction": "I"
-          },
-          "enable": {
-            "direction": "I"
-          },
-          "srcIP": {
-            "direction": "I",
-            "left": "31",
-            "right": "0"
-          },
-          "dstIP": {
-            "direction": "I",
-            "left": "31",
-            "right": "0"
-          },
-          "busIP": {
-            "direction": "O",
-            "left": "7",
-            "right": "0"
-          },
-          "start": {
-            "direction": "O"
-          }
-        }
-      },
       "axis_data_fifo_0": {
         "vlnv": "xilinx.com:ip:axis_data_fifo:2.0",
         "xci_name": "Box_axis_data_fifo_0_0",
@@ -279,7 +221,7 @@
             "value": "Native"
           },
           "C_NUM_OF_PROBES": {
-            "value": "16"
+            "value": "18"
           },
           "C_PROBE0_WIDTH": {
             "value": "8"
@@ -292,6 +234,12 @@
           },
           "C_PROBE14_WIDTH": {
             "value": "32"
+          },
+          "C_PROBE16_WIDTH": {
+            "value": "4"
+          },
+          "C_PROBE17_WIDTH": {
+            "value": "5"
           },
           "C_PROBE4_WIDTH": {
             "value": "6"
@@ -327,13 +275,13 @@
             "value": "7"
           },
           "C_PROBE_OUT2_INIT_VAL": {
-            "value": "0xC0080109"
+            "value": "0xC0A80109"
           },
           "C_PROBE_OUT2_WIDTH": {
             "value": "32"
           },
           "C_PROBE_OUT3_INIT_VAL": {
-            "value": "0xC0080101"
+            "value": "0xC0A80101"
           },
           "C_PROBE_OUT3_WIDTH": {
             "value": "32"
@@ -472,6 +420,9 @@
           "prtcl_on_off": {
             "direction": "I"
           },
+          "prtcl_valid": {
+            "direction": "I"
+          },
           "src_mac": {
             "direction": "I",
             "left": "47",
@@ -509,18 +460,84 @@
             "right": "0"
           }
         }
+      },
+      "IP_0": {
+        "vlnv": "xilinx.com:module_ref:IP:1.0",
+        "xci_name": "Box_IP_0_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "IP",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "rst",
+                "value_src": "constant"
+              },
+              "CLK_DOMAIN": {
+                "value": "Box_clk_wiz_0_0_CLK_125MHz",
+                "value_src": "default_prop"
+              },
+              "FREQ_HZ": {
+                "value": "125000000",
+                "value_src": "ip_prop"
+              },
+              "PHASE": {
+                "value": "0.0",
+                "value_src": "ip_prop"
+              }
+            }
+          },
+          "rst": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "en": {
+            "direction": "I"
+          },
+          "src_ip": {
+            "direction": "I",
+            "left": "31",
+            "right": "0"
+          },
+          "dst_ip": {
+            "direction": "I",
+            "left": "31",
+            "right": "0"
+          },
+          "data_out": {
+            "direction": "O",
+            "left": "7",
+            "right": "0"
+          },
+          "on_off": {
+            "direction": "O"
+          },
+          "valid": {
+            "direction": "O"
+          },
+          "state_dbg": {
+            "direction": "O",
+            "left": "4",
+            "right": "0"
+          }
+        }
       }
     },
     "nets": {
       "IP_0_busIP": {
         "ports": [
-          "IP_0/busIP",
+          "IP_0/data_out",
           "ethernet_generator_0/data_in"
         ]
       },
       "IP_0_start": {
         "ports": [
-          "IP_0/start",
+          "IP_0/on_off",
           "ethernet_generator_0/prtcl_on_off"
         ]
       },
@@ -574,14 +591,14 @@
         "ports": [
           "clk_wiz_0/CLK_125MHz",
           "CLK_125MHz_0",
-          "IP_0/clk",
           "axis_data_fifo_0/s_axis_aclk",
           "ila_0/clk",
           "tri_mode_ethernet_mac_0/gtx_clk",
           "tri_mode_ethernet_mac_0/refclk",
           "tri_mode_ethernet_mac_0/s_axi_aclk",
           "vio_0/clk",
-          "ethernet_generator_0/clk"
+          "ethernet_generator_0/clk",
+          "IP_0/clk"
         ]
       },
       "ethernet_generator_0_count": {
@@ -593,7 +610,7 @@
       "ethernet_generator_0_enIP": {
         "ports": [
           "ethernet_generator_0/prtcl_en",
-          "IP_0/enable"
+          "IP_0/en"
         ]
       },
       "ethernet_generator_0_tdata": {
@@ -688,14 +705,14 @@
       "vio_0_probe_out0": {
         "ports": [
           "vio_0/probe_out0",
-          "IP_0/rst",
           "axis_data_fifo_0/s_axis_aresetn",
           "ila_0/probe5",
           "tri_mode_ethernet_mac_0/glbl_rstn",
           "tri_mode_ethernet_mac_0/rx_axi_rstn",
           "tri_mode_ethernet_mac_0/s_axi_resetn",
           "tri_mode_ethernet_mac_0/tx_axi_rstn",
-          "ethernet_generator_0/rst"
+          "ethernet_generator_0/rst",
+          "IP_0/rst"
         ]
       },
       "vio_0_probe_out1": {
@@ -707,13 +724,13 @@
       "vio_0_probe_out2": {
         "ports": [
           "vio_0/probe_out2",
-          "IP_0/srcIP"
+          "IP_0/src_ip"
         ]
       },
       "vio_0_probe_out3": {
         "ports": [
           "vio_0/probe_out3",
-          "IP_0/dstIP"
+          "IP_0/dst_ip"
         ]
       },
       "vio_0_probe_out4": {
@@ -732,6 +749,24 @@
         "ports": [
           "vio_0/probe_out6",
           "ethernet_generator_0/prtcl_type"
+        ]
+      },
+      "IP_0_valid": {
+        "ports": [
+          "IP_0/valid",
+          "ethernet_generator_0/prtcl_valid"
+        ]
+      },
+      "ethernet_generator_0_state_dbg": {
+        "ports": [
+          "ethernet_generator_0/state_dbg",
+          "ila_0/probe16"
+        ]
+      },
+      "IP_0_state_dbg": {
+        "ports": [
+          "IP_0/state_dbg",
+          "ila_0/probe17"
         ]
       }
     }

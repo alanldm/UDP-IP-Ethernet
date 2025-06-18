@@ -5,46 +5,71 @@ entity IP is
     Port ( 
         clk : in std_logic;
         rst : in std_logic;
-        enable : in std_logic;
-        srcIP : in std_logic_vector(31 downto 0);
-        dstIP : in std_logic_vector(31 downto 0);
-        busIP : out std_logic_vector(7 downto 0);
-        start : out std_logic
+        en : in std_logic;
+        src_ip : in std_logic_vector(31 downto 0);
+        dst_ip : in std_logic_vector(31 downto 0);
+        data_out : out std_logic_vector(7 downto 0);
+        on_off : out std_logic;
+        valid : out std_logic;
+        state_dbg : out std_logic_vector(4 downto 0)
     );
 end IP;
 
 architecture Behavioral of IP is
 type FSM is (
-    IP_START,
-    IP_VERSION,
-    IP_SERVICE,
-    IP_LENGTH,
-    IP_ID,
-    IP_FLAGS,
-    IP_TTL,
-    IP_PROTOCOL,
-    IP_CHECKSUM,
-    IP_SRC_IP,
-    IP_DST_IP,
-    IP_DONE
+    START,
+    LOAD,
+    VERSION,
+    SERVICE,
+    LENGTH,
+    ID,
+    FLAGS,
+    TTL,
+    PROTOCOL,
+    CHECKSUM,
+    SOURCE_IP,
+    DESTINATION_IP,
+    RESET,
+    DONE
 );
-signal state, next_state : FSM := IP_START;
+signal state, next_state : FSM := START;
 signal counter : integer := 0;
+constant ip_length : integer := 4;
+constant two_bytes : integer := 2;
 
-type twoBytes is array (0 to 1) of std_logic_vector (7 downto 0);
-type fourBytes is array (0 to 3) of std_logic_vector (7 downto 0);
+type state_code_array is array (FSM) of std_logic_vector(4 downto 0);
 
-signal version : std_logic_vector (7 downto 0) := x"45";
-signal service : std_logic_vector (7 downto 0) := x"00";
-signal length : twoBytes := (x"00", x"32");
-signal id : twoBytes := (x"00", x"01");
-signal flag : twoBytes := (x"40", x"00");
-signal ttl : std_logic_vector (7 downto 0) := x"40";
-signal protocol : std_logic_vector (7 downto 0) := x"11";
-signal checksum : twoBytes := (x"AA", x"BB");
-signal src_ip : fourBytes;
-signal dst_ip : fourBytes; 
+constant state_code : state_code_array := (
+    START           => "00001",
+    LOAD            => "00010",
+    VERSION         => "00011",
+    SERVICE         => "00100",
+    LENGTH          => "00101",
+    ID              => "00110",
+    FLAGS           => "00111",
+    TTL             => "01000",
+    PROTOCOL        => "01001",
+    CHECKSUM        => "01010",
+    SOURCE_IP       => "01011",
+    DESTINATION_IP  => "01100",
+    RESET           => "01101",
+    DONE            => "01111",
+    others          => "00000"
+);
 
+type twoBytes is array (0 to two_bytes-1) of std_logic_vector (7 downto 0);
+type fourBytes is array (0 to ip_length-1) of std_logic_vector (7 downto 0);
+
+signal version_s : std_logic_vector (7 downto 0) := x"45";
+signal service_s : std_logic_vector (7 downto 0) := x"00";
+signal length_s : twoBytes := (x"00", x"32");
+signal id_s : twoBytes := (x"00", x"01");
+signal flag_s : twoBytes := (x"40", x"00");
+signal ttl_s : std_logic_vector (7 downto 0) := x"40";
+signal protocol_s : std_logic_vector (7 downto 0) := x"11";
+signal checksum_s : twoBytes := (x"AA", x"BB");
+signal src_ip_s : fourBytes;
+signal dst_ip_s : fourBytes; 
 
 begin
 
@@ -52,166 +77,143 @@ process (clk)
 begin
     if (rising_edge(clk)) then
         if (rst = '0') then
-            state <= IP_START;
+            state <= RESET;
         else
-            state <= next_state;
+            if (en = '1') then
+                state <= next_state;
+            end if;
         end if;
     end if;
 end process;
 
-process (state, counter, enable)
+process (state, counter)
 begin
     case state is
-        when IP_START =>
-            if (enable = '1') then
-                next_state <= IP_VERSION;
+        when START => next_state <= LOAD;
+        when LOAD => next_state <= VERSION;
+        when VERSION => next_state <= SERVICE;            
+        when SERVICE => next_state <= LENGTH;                       
+        when LENGTH =>
+            if (counter = two_bytes-1) then
+                next_state <= ID;
             else
-                next_state <= IP_START;
+                next_state <= LENGTH;
             end if;
-        when IP_VERSION =>
-            next_state <= IP_SERVICE;            
-        when IP_SERVICE =>
-            next_state <= IP_LENGTH;                       
-        when IP_LENGTH =>
-            if (counter = 1) then
-                next_state <= IP_ID;
+        when ID =>
+            if (counter = two_bytes-1) then
+                next_state <= FLAGS;
             else
-                next_state <= IP_LENGTH;
+                next_state <= ID;
             end if;
-        when IP_ID =>
-            if (counter = 1) then
-                next_state <= IP_FLAGS;
+        when FLAGS =>
+            if (counter = two_bytes-1) then
+                next_state <= TTL;
             else
-                next_state <= IP_ID;
+                next_state <= FLAGS;
             end if;
-        when IP_FLAGS =>
-            if (counter = 1) then
-                next_state <= IP_TTL;
+        when TTL => next_state <= PROTOCOL;
+        when PROTOCOL => next_state <= CHECKSUM;
+        when CHECKSUM =>
+            if (counter = two_bytes-1) then
+                next_state <= SOURCE_IP;
             else
-                next_state <= IP_FLAGS;
+                next_state <= CHECKSUM;
             end if;
-        when IP_TTL =>
-            next_state <= IP_PROTOCOL;
-        when IP_PROTOCOL =>
-            next_state <= IP_CHECKSUM;
-        when IP_CHECKSUM =>
-            if (counter = 1) then
-                next_state <= IP_SRC_IP;
+        when SOURCE_IP =>
+            if (counter = ip_length-1) then
+                next_state <= DESTINATION_IP;
             else
-                next_state <= IP_CHECKSUM;
-            end if;
-        when IP_SRC_IP =>
-            if (counter = 3) then
-                next_state <= IP_DST_IP;
-            else
-                next_state <= IP_SRC_IP;
+                next_state <= SOURCE_IP;
             end if;            
-        when IP_DST_IP =>
-            if (counter = 3) then
-                next_state <= IP_DONE;
+        when DESTINATION_IP =>
+            if (counter = ip_length-1) then
+                next_state <= DONE;
             else
-                next_state <= IP_DST_IP;
+                next_state <= DESTINATION_IP;
             end if;            
-        when IP_DONE =>
-            next_state <= IP_START;
-        when OTHERS =>
-            next_state <= IP_START;
+        when DONE => next_state <= START;
+        when RESET => next_state <= START;
+        when OTHERS => next_state <= START;
     end case;
 end process;
 
 process (clk)
 begin
     if (rising_edge(clk)) then
-        case state is
-            when IP_START =>
-                if (enable = '1') then
-                    start <= '1';
-                    src_ip <= (srcIP(31 downto 24), srcIP(23 downto 16), srcIP(15 downto 8), srcIP(7 downto 0));
-                    dst_ip <= (dstIP(31 downto 24), dstIP(23 downto 16), dstIP(15 downto 8), dstIP(7 downto 0));
-                    busIP <= (others => '0');
+        if (en = '1') then
+            on_off <= '1';
+            valid <= '1';
+            data_out <= (others => '0');
+            
+            case state is
+                when START =>
+                    valid <= '0';
+                
+                when LOAD =>
+                    src_ip_s <= (src_ip(31 downto 24), src_ip(23 downto 16), src_ip(15 downto 8), src_ip(7 downto 0));
+                    dst_ip_s <= (dst_ip(31 downto 24), dst_ip(23 downto 16), dst_ip(15 downto 8), dst_ip(7 downto 0));
+                    valid <= '0';          
+                
+                when VERSION => data_out <= version_s;
+                when SERVICE => data_out <= service_s;
+                when LENGTH => data_out <= length_s(counter);
+                when ID => data_out <= id_s(counter);
+                when FLAGS => data_out <= flag_s(counter);
+                when TTL => data_out <= ttl_s;                    
+                when PROTOCOL => data_out <= protocol_s;                    
+                when CHECKSUM => data_out <= checksum_s(counter);
+                when SOURCE_IP => data_out <= src_ip_s(counter);
+                when DESTINATION_IP =>
+                    data_out <= dst_ip_s(counter);
                     
+                    if (counter = ip_length-1) then
+                        on_off <= '0';
+                    end if;
+                    
+                when DONE =>
+                    on_off <= '0';
+                    valid <= '0';
+                    
+                when RESET =>
+                    on_off <= '0';
+                    valid <= '0';
+                    
+                when OTHERS =>
+                    on_off <= '0';
+                    valid <= '0';
+            end case;
+        else
+            on_off <= '0';
+            data_out <= (others => '0');
+            valid <= '0';
+        end if;
+        
+        state_dbg <= state_code(state);
+    end if;
+end process;
+
+process (clk)
+begin
+if (rising_edge(clk)) then
+    if (en = '1') then
+        case state is
+            when LENGTH | ID | FLAGS | CHECKSUM =>
+                if (counter = two_bytes-1) then
                     counter <= 0;
+                else
+                    counter <= counter + 1;
                 end if;
-            when IP_VERSION =>
-                start <= '1';
-                busIP <= version;
+            when SOURCE_IP | DESTINATION_IP =>
+                if (counter = ip_length-1) then
+                    counter <= 0;
+                else
+                    counter <= counter + 1;
+                end if;
+            when others =>
                 counter <= 0;
-            when IP_SERVICE =>
-                start <= '1';
-                busIP <= service;
-                counter <= 0;
-            when IP_LENGTH =>
-                start <= '1';
-                busIP <= length(counter);
-                
-                if (counter = 1) then
-                    counter <= 0;
-                else
-                    counter <= counter + 1;
-                end if;
-            when IP_ID =>
-                start <= '1';
-                busIP <= id(counter);
-                
-                if (counter = 1) then
-                    counter <= 0;
-                else
-                    counter <= counter + 1;
-                end if;
-            when IP_FLAGS =>
-                start <= '1';
-                busIP <= flag(counter);
-                
-                if (counter = 1) then
-                    counter <= 0;
-                else
-                    counter <= counter + 1;
-                end if;
-            when IP_TTL =>
-                start <= '1';
-                busIP <= ttl;
-                counter <= 0;
-            when IP_PROTOCOL =>
-                start <= '1';
-                busIP <= protocol;
-                counter <= 0;
-            when IP_CHECKSUM =>
-                start <= '1';
-                busIP <= checksum(counter);
-                
-                if (counter = 1) then
-                    counter <= 0;
-                else
-                    counter <= counter + 1;
-                end if;
-            when IP_SRC_IP =>
-                start <= '1';
-                busIP <= src_ip(counter);
-                
-                if (counter = 3) then
-                    counter <= 0;
-                else
-                    counter <= counter + 1;
-                end if;
-            when IP_DST_IP =>
-                busIP <= dst_ip(counter);
-                
-                if (counter = 3) then
-                    start <= '0';
-                    counter <= 0;
-                else
-                    start <= '1';
-                    counter <= counter + 1;
-                end if;
-            when IP_DONE =>
-                start <= '0';
-                busIP <= (others => '0');
-                counter <= 0;
-            when OTHERS =>
-                start <= '0';
-                busIP <= (others => '0');
         end case;
     end if;
+end if;
 end process;
 
 end Behavioral;
