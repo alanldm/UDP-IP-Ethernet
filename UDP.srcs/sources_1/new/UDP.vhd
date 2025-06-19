@@ -55,6 +55,7 @@ signal data_s : busData;
 signal state, next_state : FSM := START;
 signal counter : integer := 0;
 signal length_s : integer := 1;
+signal debug : integer := 0;
 constant two_bytes : integer := 2;
 
 begin
@@ -163,11 +164,14 @@ begin
                 when CHECKSUM =>
                     data_out <= chcksum_s(counter);
                     
-                when DATA =>
-                    data_out <= data_s(counter);
-                    
+                when DATA =>                    
                     if (counter = length_s-1) then
+                        debug <= debug + 1;
+                        data_out <= std_logic_vector(to_unsigned(debug, 8));
+                        
                         on_off <= '0';
+                    else
+                        data_out <= data_s(counter);
                     end if;
                 when RESET =>
                     on_off <= '0';
