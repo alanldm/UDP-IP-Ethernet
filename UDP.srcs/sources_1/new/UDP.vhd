@@ -145,8 +145,11 @@ begin
                     
                 when SOURCE_PORT =>
                     data_out <= src_port_s(counter);
+                    
+                    -- Remove this part and put it in another State
                     concat := data_length_s(0) & data_length_s(1);
                     result := unsigned(concat) + 8;
+                    -- Remove it
                     
                 when DESTINATION_PORT =>
                     data_out <= dst_port_s(counter);

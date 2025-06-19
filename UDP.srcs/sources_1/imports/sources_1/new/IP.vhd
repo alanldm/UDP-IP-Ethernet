@@ -183,9 +183,12 @@ begin
                 
                 when VERSION => 
                     data_out <= version_s;
+                    
+                    -- Remove this part and put it in another State
                     concat := length_s(0) & length_s(1);
                     result := unsigned(concat) + 8 + 20;
                     length_s <= (std_logic_vector(result(15 downto 8)), std_logic_vector(result(7 downto 0)));
+                    -- Remove it
                     
                 when SERVICE => data_out <= service_s;
                 when LENGTH => data_out <= length_s(counter);
