@@ -645,6 +645,11 @@
           },
           "on_off": {
             "direction": "O"
+          },
+          "state_dbg": {
+            "direction": "O",
+            "left": "3",
+            "right": "0"
           }
         }
       }

@@ -14,7 +14,8 @@ entity UDP is
         data_in : in std_logic_vector(159 downto 0);
         data_out : out std_logic_vector(7 downto 0);
         valid : out std_logic;
-        on_off : out std_logic
+        on_off : out std_logic;
+        state_dbg : out std_logic_vector(3 downto 0)
     );
 end UDP;
 
@@ -29,6 +30,21 @@ type FSM is (
     DATA,
     RESET,
     DONE
+);
+
+type state_code_array is array (FSM) of std_logic_vector(3 downto 0);
+
+constant state_code : state_code_array := (
+    START               => "0001",
+    LOAD                => "0010",
+    SOURCE_PORT         => "0011",
+    DESTINATION_PORT    => "0100",
+    LENGTH              => "0101",
+    CHECKSUM            => "0110",
+    DATA                => "0111",
+    RESET               => "1000",
+    DONE                => "1001",
+    others              => "1111"
 );
 
 type twoBytes is array (0 to 1) of std_logic_vector(7 downto 0);
@@ -162,6 +178,7 @@ begin
             valid <= '0';
             data_out <= (others => '0');
         end if;
+    state_dbg <= state_code(state);
     end if;
 end process;
 
