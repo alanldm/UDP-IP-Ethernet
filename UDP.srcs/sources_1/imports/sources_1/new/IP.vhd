@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 entity IP is
     Port ( 
@@ -8,6 +9,7 @@ entity IP is
         en : in std_logic;
         prtcl_on_off : in std_logic;
         prtcl_valid : in std_logic;
+        data_length : in std_logic_vector(15 downto 0);
         src_ip : in std_logic_vector(31 downto 0);
         dst_ip : in std_logic_vector(31 downto 0);
         data_in : in std_logic_vector(7 downto 0);
@@ -70,7 +72,7 @@ type fourBytes is array (0 to ip_length-1) of std_logic_vector (7 downto 0);
 
 signal version_s : std_logic_vector (7 downto 0) := x"45";
 signal service_s : std_logic_vector (7 downto 0) := x"00";
-signal length_s : twoBytes := (x"00", x"32");
+signal length_s : twoBytes;
 signal id_s : twoBytes := (x"00", x"01");
 signal flag_s : twoBytes := (x"40", x"00");
 signal ttl_s : std_logic_vector (7 downto 0) := x"40";
@@ -158,6 +160,9 @@ begin
 end process;
 
 process (clk)
+variable result : unsigned(15 downto 0);
+variable concat : std_logic_vector(15 downto 0);
+                    
 begin
     if (rising_edge(clk)) then
         if (en = '1') then
@@ -173,9 +178,15 @@ begin
                 when LOAD =>
                     src_ip_s <= (src_ip(31 downto 24), src_ip(23 downto 16), src_ip(15 downto 8), src_ip(7 downto 0));
                     dst_ip_s <= (dst_ip(31 downto 24), dst_ip(23 downto 16), dst_ip(15 downto 8), dst_ip(7 downto 0));
+                    length_s <= (data_length(15 downto 8), data_length(7 downto 0));
                     valid <= '0';          
                 
-                when VERSION => data_out <= version_s;
+                when VERSION => 
+                    data_out <= version_s;
+                    concat := length_s(0) & length_s(1);
+                    result := unsigned(concat) + 8 + 20;
+                    length_s <= (std_logic_vector(result(15 downto 8)), std_logic_vector(result(7 downto 0)));
+                    
                 when SERVICE => data_out <= service_s;
                 when LENGTH => data_out <= length_s(counter);
                 when ID => data_out <= id_s(counter);
