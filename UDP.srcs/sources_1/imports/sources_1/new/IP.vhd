@@ -22,9 +22,26 @@ entity IP is
 end IP;
 
 architecture Behavioral of IP is
+
+function ip_checksum(header : std_logic_vector(159 downto 0)) return std_logic_vector is
+    variable sum : unsigned(17 downto 0) := (others => '0');
+    variable word : unsigned(15 downto 0);
+begin
+    for i in 0 to 9 loop
+        word := unsigned(header((i*16 + 15) downto i*16));
+        sum := sum + resize(word, 18);
+    end loop;
+    
+    sum := resize(sum(15 downto 0), 18) + ("00" & sum(17 downto 16));
+    
+    return std_logic_vector(not sum(15 downto 0));
+end function;
+
 type FSM is (
     START,
     LOAD,
+    CAL_LENGTH,
+    CAL_CHECKSUM,
     VERSION,
     SERVICE,
     LENGTH,
@@ -50,6 +67,8 @@ type state_code_array is array (FSM) of std_logic_vector(4 downto 0);
 constant state_code : state_code_array := (
     START           => "00001",
     LOAD            => "00010",
+    CAL_LENGTH      => "10001",
+    CAL_CHECKSUM    => "10010",
     VERSION         => "00011",
     SERVICE         => "00100",
     LENGTH          => "00101",
@@ -77,7 +96,7 @@ signal id_s : twoBytes := (x"00", x"01");
 signal flag_s : twoBytes := (x"40", x"00");
 signal ttl_s : std_logic_vector (7 downto 0) := x"40";
 signal protocol_s : std_logic_vector (7 downto 0) := x"11";
-signal checksum_s : twoBytes := (x"B7", x"59");
+signal checksum_s : twoBytes;
 signal src_ip_s : fourBytes;
 signal dst_ip_s : fourBytes; 
 
@@ -100,8 +119,10 @@ process (state, counter)
 begin
     case state is
         when START => next_state <= LOAD;
-        when LOAD => next_state <= VERSION;
-        when VERSION => next_state <= SERVICE;            
+        when LOAD => next_state <= CAL_LENGTH;
+        when CAL_LENGTH => next_state <= CAL_CHECKSUM;
+        when CAL_CHECKSUM => next_state <= VERSION;
+        when VERSION => next_state <= SERVICE;         
         when SERVICE => next_state <= LENGTH;                       
         when LENGTH =>
             if (counter = two_bytes-1) then
@@ -162,6 +183,8 @@ end process;
 process (clk)
 variable result : unsigned(15 downto 0);
 variable concat : std_logic_vector(15 downto 0);
+variable header : std_logic_vector(159 downto 0);
+variable chksum : std_logic_vector(15 downto 0) := (others => '0');
                     
 begin
     if (rising_edge(clk)) then
@@ -179,17 +202,21 @@ begin
                     src_ip_s <= (src_ip(31 downto 24), src_ip(23 downto 16), src_ip(15 downto 8), src_ip(7 downto 0));
                     dst_ip_s <= (dst_ip(31 downto 24), dst_ip(23 downto 16), dst_ip(15 downto 8), dst_ip(7 downto 0));
                     length_s <= (data_length(15 downto 8), data_length(7 downto 0));
-                    valid <= '0';          
-                
-                when VERSION => 
-                    data_out <= version_s;
+                    valid <= '0';
                     
-                    -- Remove this part and put it in another State
+                when CAL_LENGTH =>
                     concat := length_s(0) & length_s(1);
                     result := unsigned(concat) + 8 + 20;
                     length_s <= (std_logic_vector(result(15 downto 8)), std_logic_vector(result(7 downto 0)));
-                    -- Remove it
+                    valid <= '0';
                     
+                when CAL_CHECKSUM =>
+                    header := version_s & service_s & length_s(0) & length_s(1) & id_s(0) & id_s(1) & flag_s(0) & flag_s(1) & ttl_s & protocol_s & chksum & src_ip_s(0) & src_ip_s(1) & src_ip_s(2) & src_ip_s(3) & dst_ip_s(0) & dst_ip_s(1) & dst_ip_s(2) & dst_ip_s(3);
+                    chksum := ip_checksum(header);
+                    checksum_s <= (chksum(15 downto 8), chksum(7 downto 0));      
+                    valid <= '0';
+                    
+                when VERSION => data_out <= version_s;
                 when SERVICE => data_out <= service_s;
                 when LENGTH => data_out <= length_s(counter);
                 when ID => data_out <= id_s(counter);
