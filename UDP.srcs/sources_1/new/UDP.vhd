@@ -119,6 +119,8 @@ begin
 end process;
 
 process (clk)
+variable result : unsigned(15 downto 0);
+variable concat : std_logic_vector(15 downto 0);
 begin
     if (rising_edge(clk)) then
         if (en = '1') then
@@ -143,9 +145,13 @@ begin
                     
                 when SOURCE_PORT =>
                     data_out <= src_port_s(counter);
+                    concat := data_length_s(0) & data_length_s(1);
+                    result := unsigned(concat) + 8;
                     
                 when DESTINATION_PORT =>
                     data_out <= dst_port_s(counter);
+                    data_length_s(0) <= std_logic_vector(result(15 downto 8));
+                    data_length_s(1) <= std_logic_vector(result(7 downto 0));
                     
                 when LENGTH =>
                     data_out <= data_length_s(counter);

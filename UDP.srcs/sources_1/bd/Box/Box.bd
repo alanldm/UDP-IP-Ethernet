@@ -330,7 +330,7 @@
             "value": "16"
           },
           "C_PROBE_OUT9_INIT_VAL": {
-            "value": "0x001E"
+            "value": "0x000B"
           },
           "C_PROBE_OUT9_WIDTH": {
             "value": "16"
