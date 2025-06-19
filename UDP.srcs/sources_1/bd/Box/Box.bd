@@ -15,8 +15,8 @@
       "tri_mode_ethernet_mac_0": "",
       "vio_0": "",
       "ethernet_generator_0": "",
-      "UDP_0": "",
-      "IP_0": ""
+      "IP_0": "",
+      "UDP_0": ""
     },
     "ports": {
       "CLK_125MHz_0": {
@@ -492,87 +492,6 @@
           }
         }
       },
-      "UDP_0": {
-        "vlnv": "xilinx.com:module_ref:UDP:1.0",
-        "xci_name": "Box_UDP_0_0",
-        "reference_info": {
-          "ref_type": "hdl",
-          "ref_name": "UDP",
-          "boundary_crc": "0x0"
-        },
-        "ports": {
-          "clk": {
-            "type": "clk",
-            "direction": "I",
-            "parameters": {
-              "ASSOCIATED_RESET": {
-                "value": "rst",
-                "value_src": "constant"
-              },
-              "CLK_DOMAIN": {
-                "value": "Box_clk_wiz_0_0_CLK_125MHz",
-                "value_src": "default_prop"
-              },
-              "FREQ_HZ": {
-                "value": "125000000",
-                "value_src": "ip_prop"
-              },
-              "PHASE": {
-                "value": "0.0",
-                "value_src": "ip_prop"
-              }
-            }
-          },
-          "rst": {
-            "type": "rst",
-            "direction": "I"
-          },
-          "en": {
-            "direction": "I"
-          },
-          "src_port": {
-            "direction": "I",
-            "left": "15",
-            "right": "0"
-          },
-          "dst_port": {
-            "direction": "I",
-            "left": "15",
-            "right": "0"
-          },
-          "data_length": {
-            "direction": "I",
-            "left": "15",
-            "right": "0"
-          },
-          "chcksum": {
-            "direction": "I",
-            "left": "15",
-            "right": "0"
-          },
-          "data_in": {
-            "direction": "I",
-            "left": "159",
-            "right": "0"
-          },
-          "data_out": {
-            "direction": "O",
-            "left": "7",
-            "right": "0"
-          },
-          "valid": {
-            "direction": "O"
-          },
-          "on_off": {
-            "direction": "O"
-          },
-          "state_dbg": {
-            "direction": "O",
-            "left": "3",
-            "right": "0"
-          }
-        }
-      },
       "IP_0": {
         "vlnv": "xilinx.com:module_ref:IP:1.0",
         "xci_name": "Box_IP_0_0",
@@ -657,6 +576,87 @@
             "right": "0"
           }
         }
+      },
+      "UDP_0": {
+        "vlnv": "xilinx.com:module_ref:UDP:1.0",
+        "xci_name": "Box_UDP_0_0",
+        "reference_info": {
+          "ref_type": "hdl",
+          "ref_name": "UDP",
+          "boundary_crc": "0x0"
+        },
+        "ports": {
+          "clk": {
+            "type": "clk",
+            "direction": "I",
+            "parameters": {
+              "ASSOCIATED_RESET": {
+                "value": "rst",
+                "value_src": "constant"
+              },
+              "CLK_DOMAIN": {
+                "value": "Box_clk_wiz_0_0_CLK_125MHz",
+                "value_src": "default_prop"
+              },
+              "FREQ_HZ": {
+                "value": "125000000",
+                "value_src": "ip_prop"
+              },
+              "PHASE": {
+                "value": "0.0",
+                "value_src": "ip_prop"
+              }
+            }
+          },
+          "rst": {
+            "type": "rst",
+            "direction": "I"
+          },
+          "en": {
+            "direction": "I"
+          },
+          "src_port": {
+            "direction": "I",
+            "left": "15",
+            "right": "0"
+          },
+          "dst_port": {
+            "direction": "I",
+            "left": "15",
+            "right": "0"
+          },
+          "data_length": {
+            "direction": "I",
+            "left": "15",
+            "right": "0"
+          },
+          "chcksum": {
+            "direction": "I",
+            "left": "15",
+            "right": "0"
+          },
+          "data_in": {
+            "direction": "I",
+            "left": "159",
+            "right": "0"
+          },
+          "data_out": {
+            "direction": "O",
+            "left": "7",
+            "right": "0"
+          },
+          "valid": {
+            "direction": "O"
+          },
+          "on_off": {
+            "direction": "O"
+          },
+          "state_dbg": {
+            "direction": "O",
+            "left": "3",
+            "right": "0"
+          }
+        }
       }
     },
     "nets": {
@@ -729,8 +729,8 @@
           "tri_mode_ethernet_mac_0/s_axi_aclk",
           "vio_0/clk",
           "ethernet_generator_0/clk",
-          "UDP_0/clk",
-          "IP_0/clk"
+          "IP_0/clk",
+          "UDP_0/clk"
         ]
       },
       "ethernet_generator_0_count": {
@@ -844,8 +844,8 @@
           "tri_mode_ethernet_mac_0/s_axi_resetn",
           "tri_mode_ethernet_mac_0/tx_axi_rstn",
           "ethernet_generator_0/rst",
-          "UDP_0/rst",
-          "IP_0/rst"
+          "IP_0/rst",
+          "UDP_0/rst"
         ]
       },
       "vio_0_probe_out1": {
@@ -941,8 +941,8 @@
       "vio_0_probe_out9": {
         "ports": [
           "vio_0/probe_out9",
-          "UDP_0/data_length",
-          "IP_0/data_length"
+          "IP_0/data_length",
+          "UDP_0/data_length"
         ]
       },
       "vio_0_probe_out10": {

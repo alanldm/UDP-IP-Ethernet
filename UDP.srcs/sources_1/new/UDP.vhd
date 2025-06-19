@@ -142,7 +142,7 @@ begin
                                data_in(79 downto 72), data_in(71 downto 64), data_in(63 downto 56), data_in(55 downto 48), data_in(47 downto 40),
                                data_in(39 downto 32), data_in(31 downto 24), data_in(23 downto 16), data_in(15 downto 8), data_in(7 downto 0));
                     valid <= '0';
-                    
+                
                 when SOURCE_PORT =>
                     data_out <= src_port_s(counter);
                     
