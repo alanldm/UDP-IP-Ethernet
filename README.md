@@ -72,7 +72,7 @@ This layer defines the characteristics of the communication bus, such as:
 All of these components are tightly related to circuit design and low-level hardware implementation. So...
 
 <div style="text-align: center;">
-    <img src="./.images/meme.jpg" alt="OSI Model" height="500"/>
+    <img src="./.images/Meme.jpg" alt="OSI Model" height="500"/>
 </div>
 
 > 💀 **Don't worry** — someone has already done the dirty work. Due to the complexity of this layer, it's common to rely on dedicated chips to handle its functions. In this project, for example, I used the `Marvell 88E1512` PHY chip.
@@ -264,7 +264,7 @@ The following table summarizes all input and output ports of the `ethernet_gener
 This block, also implemented in VHDL, contains a FSM responsible for sending an IP+UDP packet. The following sections provide a brief overview of its ports and internal states.
 
 <div style="text-align: center;">
-    <img src="./.images/IP_block.jpg" alt="OSI Model"/>
+    <img src="./.images/IP_Block.jpg" alt="OSI Model"/>
 </div>
 
 #### 🔁 IP Block Interface Summary
@@ -328,7 +328,7 @@ This table summarizes the input and output ports of the IP block.
 | Signal Name     | Direction | Width (bits) | Description                                                           |
 |------------------|-----------|----------------|------------------------------------------------------------------------|
 | `clk`           | Input     | 1              | System clock                                                           |
-| `rst`           | Input     | 1              | Active-low reset                                                       |
+| `rst`           | Input     | 1              | Reset (active low)                                                     |
 | `en`            | Input     | 1              | Enable signal to advance the FSM                                       |
 | `src_port`      | Input     | 16             | Source UDP port number                                                 |
 | `dst_port`      | Input     | 16             | Destination UDP port number                                            |
