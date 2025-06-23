@@ -50,12 +50,12 @@ The **Physical Layer** manages the transmission and reception of bits over physi
 - The **Payload**
 - The **Trailer (CRC / Frame Check Sequence)** used for error detection
 
-<div style="text-align: center;">
-    <img src="./.images/Ethernet.jpg" alt="Ethernet" />
-    <figcaption style="font-style: italic; font-size: 14px; color: gray;">
-        Image source: <a href="https://ptgmedia.pearsoncmg.com/imprint_downloads/informit/learninglabs/9780134213736/ch29.html" target="_blank">Pearson Learning Labs</a>   
+<figure style="text-align: center;">
+  <img src="./.images/Ethernet.jpg" alt="Ethernet" />
+  <figcaption style="font-style: italic; font-size: 14px; color: gray; margin-top: 6px;">
+    Image source: <a href="https://ptgmedia.pearsoncmg.com/imprint_downloads/informit/learninglabs/9780134213736/ch29.html" target="_blank">Pearson Learning Labs</a>
   </figcaption>
-</div>
+</figure>
 
 ### ⚙️ Physical Layer
 
@@ -68,12 +68,12 @@ This layer defines the characteristics of the communication bus, such as:
 - **PMA** (Physical Medium Attachment)
 - **PMD** (Physical Medium Dependent)
 
-<div style="text-align: center;">
-    <img src="./.images/PHY.png" alt="PHY" height="500"/>
-    <figcaption style="font-style: italic; font-size: 14px; color: gray;">
-        Image source: <a href="https://www.youtube.com/watch?v=JH3cMYErmKI&t=331s" target="_blank">YouTube – PowerCert Animated Videos</a>
-    </figcaption>
-</div>
+<figure style="text-align: center;">
+  <img src="./.images/PHY.png" alt="PHY" height="500" />
+  <figcaption style="font-style: italic; font-size: 14px; color: gray; margin-top: 6px;">
+    Image source: <a href="https://www.youtube.com/watch?v=JH3cMYErmKI&t=331s" target="_blank">YouTube – PowerCert Animated Videos</a>
+  </figcaption>
+</figure>
 
 All of these components are tightly related to circuit design and low-level hardware implementation. So...
 
@@ -87,12 +87,13 @@ All of these components are tightly related to circuit design and low-level hard
 
 As mentioned before, this part of the Ethernet protocol is responsible for building the Ethernet frame, which consists of the **header** (destination MAC address, source MAC address, and the encapsulated protocol type) and the **payload**. Therefore, the **preamble**, **Start Frame Delimiter (SFD)**, and the **trailer (CRC)** are **not** considered part of the frame itself — they are handled separately.
 
-<div style="text-align: center;">
-    <img src="./.images/Ethernet_Frame.jpg" alt="Ethernet Header" height="300"/>
-      <figcaption style="font-style: italic; font-size: 14px; color: gray;">
-        Image source: <a href="https://www.cbtnuggets.com/blog/technology/networking/what-is-ethernet-frame-format" target="_blank">CBT Nuggets</a>
-      </figcaption>
-</div>
+<figure style="text-align: center;">
+  <img src="./.images/Ethernet_Frame.jpg" alt="Ethernet Header" height="300" />
+  <figcaption style="font-style: italic; font-size: 14px; color: gray; margin-top: 6px;">
+    Image source: <a href="https://www.cbtnuggets.com/blog/technology/networking/what-is-ethernet-frame-format" target="_blank">CBT Nuggets</a>
+  </figcaption>
+</figure>
+
 
 > 🆔 **The MAC address is a unique identifier** assigned to a network interface. It's essentially the ID of your hardware on the network!
 
@@ -117,12 +118,12 @@ A summary of the Ethernet frame structure is presented in the table below:
 
 This protocol operates at the **third layer (Network Layer)** of the OSI model and serves as the foundation for communication between different networks. It typically encapsulates a higher-layer protocol, such as `UDP` or `TCP`, providing logical addressing and routing capabilities. An example of an Internet Protocol (IP) packet structure can be seen in the figure below.
 
-<div style="text-align: center;">
-    <img src="./.images/IPv4_Packet-en.png" alt="IPv4 Header"/>
-    <figcaption style="font-style: italic; font-size: 14px; color: gray;">
-        Image source: <a href="https://ptgmedia.pearsoncmg.com/imprint_downloads/informit/learninglabs/9780134213736/ch29.html" target="_blank">Press Books</a>
+<figure style="text-align: center;">
+  <img src="./.images/IPv4_Packet-en.png" alt="IPv4 Header" />
+  <figcaption style="font-style: italic; font-size: 14px; color: gray; margin-top: 6px;">
+    Image source: <a href="https://ptgmedia.pearsoncmg.com/imprint_downloads/informit/learninglabs/9780134213736/ch29.html" target="_blank">Pearson – Learning Labs</a>
   </figcaption>
-</div>
+</figure>
 
 Since I used IPv4 for this project, the structure of its packet header is summarized in the table below.
 
@@ -152,12 +153,12 @@ Since I used IPv4 for this project, the structure of its packet header is summar
 
 Finally, we arrive at the **UDP protocol** in the **Transport Layer**. UDP enables fast data transmission without the need for a prior connection or any guarantee of delivery, order, or integrity. Because of its simplicity and low overhead, UDP is ideal for scenarios where **speed matters more than reliability**. Its header is minimal — just 8 bytes — and is shown in the image below.
 
-<div style="text-align: center;">
-    <img src="./.images/udp.png" alt="UDP Header"/>
-    <figcaption style="font-style: italic; font-size: 14px; color: gray;">
-        Image source: <a href="https://cheapsslsecurity.com/blog/how-udp-works-a-look-at-the-user-datagram-protocol-in-computer-networks/" target="_blank">cheapsslsecurity.com</a>
+<figure style="text-align: center;">
+  <img src="./.images/udp.png" alt="UDP Header" />
+  <figcaption style="font-style: italic; font-size: 14px; color: gray; margin-top: 6px;">
+    Image source: <a href="https://cheapsslsecurity.com/blog/how-udp-works-a-look-at-the-user-datagram-protocol-in-computer-networks/" target="_blank">cheapsslsecurity.com</a>
   </figcaption>
-</div>
+</figure>   
 
 The table below provides a summary of the UDP protocol header.
 
@@ -216,7 +217,7 @@ If we remove the ILA and the VIO, we can have an image with more clarity.
     <img src="./.images/Block_diagram_without_ILA_VIO.jpg" alt="Block Diagram without ILA and VIO"/>
 </div>
 
-### Tri Mode Ethernet MAC Configuration
+### 💾 Tri Mode Ethernet MAC Configuration
 <div style="text-align: center;">
 
 | Parameter                           | Value                                                                 |
@@ -230,7 +231,7 @@ If we remove the ILA and the VIO, we can have an image with more clarity.
 | Statistics Reset                    | Yes                                                                   |
 </div>
 
-### AXI4-Stream Data FIFO Configuration
+### 💾 AXI4-Stream Data FIFO Configuration
 <div style="text-align: center;">
 
 | Parameter                        | Value        |
