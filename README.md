@@ -51,7 +51,10 @@ The **Physical Layer** manages the transmission and reception of bits over physi
 - The **Trailer (CRC / Frame Check Sequence)** used for error detection
 
 <div style="text-align: center;">
-    <img src="./.images/Ethernet.jpg" alt="OSI Model" />
+    <img src="./.images/Ethernet.jpg" alt="Ethernet" />
+    <figcaption style="font-style: italic; font-size: 14px; color: gray;">
+        Image source: <a href="https://ptgmedia.pearsoncmg.com/imprint_downloads/informit/learninglabs/9780134213736/ch29.html" target="_blank">Pearson Learning Labs</a>   
+  </figcaption>
 </div>
 
 ### ⚙️ Physical Layer
@@ -66,13 +69,16 @@ This layer defines the characteristics of the communication bus, such as:
 - **PMD** (Physical Medium Dependent)
 
 <div style="text-align: center;">
-    <img src="./.images/PHY.png" alt="OSI Model" height="500"/>
+    <img src="./.images/PHY.png" alt="PHY" height="500"/>
+    <figcaption style="font-style: italic; font-size: 14px; color: gray;">
+        Image source: <a href="https://www.youtube.com/watch?v=JH3cMYErmKI&t=331s" target="_blank">YouTube – PowerCert Animated Videos</a>
+    </figcaption>
 </div>
 
 All of these components are tightly related to circuit design and low-level hardware implementation. So...
 
 <div style="text-align: center;">
-    <img src="./.images/Meme.jpg" alt="OSI Model" height="500"/>
+    <img src="./.images/Meme.jpg" alt="Meme" height="500"/>
 </div>
 
 > 💀 **Don't worry** — someone has already done the dirty work. Due to the complexity of this layer, it's common to rely on dedicated chips to handle its functions. In this project, for example, I used the `Marvell 88E1512` PHY chip.
@@ -82,7 +88,10 @@ All of these components are tightly related to circuit design and low-level hard
 As mentioned before, this part of the Ethernet protocol is responsible for building the Ethernet frame, which consists of the **header** (destination MAC address, source MAC address, and the encapsulated protocol type) and the **payload**. Therefore, the **preamble**, **Start Frame Delimiter (SFD)**, and the **trailer (CRC)** are **not** considered part of the frame itself — they are handled separately.
 
 <div style="text-align: center;">
-    <img src="./.images/Ethernet_Frame.jpg" alt="OSI Model" height="300"/>
+    <img src="./.images/Ethernet_Frame.jpg" alt="Ethernet Header" height="300"/>
+      <figcaption style="font-style: italic; font-size: 14px; color: gray;">
+        Image source: <a href="https://www.cbtnuggets.com/blog/technology/networking/what-is-ethernet-frame-format" target="_blank">CBT Nuggets</a>
+      </figcaption>
 </div>
 
 > 🆔 **The MAC address is a unique identifier** assigned to a network interface. It's essentially the ID of your hardware on the network!
@@ -109,7 +118,10 @@ A summary of the Ethernet frame structure is presented in the table below:
 This protocol operates at the **third layer (Network Layer)** of the OSI model and serves as the foundation for communication between different networks. It typically encapsulates a higher-layer protocol, such as `UDP` or `TCP`, providing logical addressing and routing capabilities. An example of an Internet Protocol (IP) packet structure can be seen in the figure below.
 
 <div style="text-align: center;">
-    <img src="./.images/IPv4_Packet-en.png" alt="OSI Model"/>
+    <img src="./.images/IPv4_Packet-en.png" alt="IPv4 Header"/>
+    <figcaption style="font-style: italic; font-size: 14px; color: gray;">
+        Image source: <a href="https://ptgmedia.pearsoncmg.com/imprint_downloads/informit/learninglabs/9780134213736/ch29.html" target="_blank">Press Books</a>
+  </figcaption>
 </div>
 
 Since I used IPv4 for this project, the structure of its packet header is summarized in the table below.
@@ -141,7 +153,10 @@ Since I used IPv4 for this project, the structure of its packet header is summar
 Finally, we arrive at the **UDP protocol** in the **Transport Layer**. UDP enables fast data transmission without the need for a prior connection or any guarantee of delivery, order, or integrity. Because of its simplicity and low overhead, UDP is ideal for scenarios where **speed matters more than reliability**. Its header is minimal — just 8 bytes — and is shown in the image below.
 
 <div style="text-align: center;">
-    <img src="./.images/udp.png" alt="OSI Model"/>
+    <img src="./.images/udp.png" alt="UDP Header"/>
+    <figcaption style="font-style: italic; font-size: 14px; color: gray;">
+        Image source: <a href="https://cheapsslsecurity.com/blog/how-udp-works-a-look-at-the-user-datagram-protocol-in-computer-networks/" target="_blank">cheapsslsecurity.com</a>
+  </figcaption>
 </div>
 
 The table below provides a summary of the UDP protocol header.
@@ -183,24 +198,77 @@ The following topics provide a quick overview of the setup used in this project.
 - **Wireshark** — to inspect and analyze the Ethernet/UDP packets  
 - **socat** — to simulate UDP endpoints and assist in testing the communication
 
-## Block Diagram
+## 📚 Block Diagram
 
 In the block diagram, you will find a mix of custom and pre-built IP blocks. My contribution focuses on three custom modules: `UDP`, `IP`, and `Ethernet`. The other components — including the `Clocking Wizard`, the `Tri-Mode Ethernet MAC`, and the `AXI4-Stream Data FIFO` — are standard IP cores provided by **Xilinx**.
 
 <div style="text-align: center;">
-    <img src="./.images/Block_diagram.jpg" alt="OSI Model"/>
+    <img src="./.images/Block_diagram.jpg" alt="Block Diagram"/>
 </div>
 
 > 💰 It’s worth noting that some of the IP cores used in this project are **licensed**. For example, during development I had to use the **free trial** of the **Tri-Mode Ethernet MAC** core from Xilinx. This IP manages the communication between the **Data Link** and **Physical** layers — in this case, connected to the **Marvell 88E1512** PHY chip. It is responsible for tasks such as inserting the **preamble** and **CRC** (FCS) into the Ethernet frame automatically. I also used the **Virtual Input/Output (VIO)** and **Integrated Logic Analyzer (ILA)** blocks for debugging purposes. These tools were essential for monitoring internal signals in real time and validating the behavior of the FSMs and data paths.
 
-## Ethernet Layer
+> 📌 **Note:** For **1G/2.5G Ethernet** operation, a **125 MHz** clock is required. In this project, a *Si570 oscillator* provides a *156.25 MHz* signal, which is then converted to 125 MHz using a `Clocking Wizard`.
+
+If we remove the ILA and the VIO, we can have an image with more clarity.
+
+<div style="text-align: center;">
+    <img src="./.images/Block_diagram_without_ILA_VIO.jpg" alt="Block Diagram without ILA and VIO"/>
+</div>
+
+### Tri Mode Ethernet MAC Configuration
+<div style="text-align: center;">
+
+| Parameter                           | Value                                                                 |
+|-------------------------------------|-----------------------------------------------------------------------|
+| PHY Interface                       | RGMII                                                                 |
+| MAC Speed                           | Tri speed                                                             |
+| Management Type                     | AXI4-Lite 125 MHz, MDIO, Add IO Buffers for MDIO Interface ports      |
+| Shared Logic                        | Include Shared Logic in core (ports available for other instances)    |
+| Frame Filter                        | 4                                                                     |
+| Statistics Counters                 | 64 bit                                                                |
+| Statistics Reset                    | Yes                                                                   |
+</div>
+
+### AXI4-Stream Data FIFO Configuration
+<div style="text-align: center;">
+
+| Parameter                        | Value        |
+|----------------------------------|--------------|
+| FIFO depth                       | 512          |
+| Memory type                      | Auto         |
+| Independent clocks               | No           |
+| CDC sync stages                  | 3            |
+| Enable packet mode               | No           |
+| ACLKEN conversion mode           | None         |
+| Enable ECC                       | No           |
+| Include ECC error injection      | No           |
+| TDATA width (bytes)              | 1            |
+| Enable TSTRB                     | No           |
+| Enable TKEEP                     | No           |
+| Enable TLAST                     | Yes (Manual) |
+| TID width (bits)                 | 0            |
+| TDEST width (bits)               | 0            |
+| TUSER width (bits)               | 0            |
+| Enable write data count          | Yes          |
+| Enable almost full               | No           |
+| Enable programmable full         | No           |
+| Programmable full threshold      | 11           |
+| Enable read data count           | No           |
+| Enable almost empty              | No           |
+| Enable programmable empty        | No           |
+| Programmable empty threshold     | 5            |
+</div>
+
+
+## 🔌Ethernet Layer
 
 ### 🧱 Ethernet Block
 
 This block, implemented in VHDL, contains a finite state machine (FSM) responsible for sending the entire Ethernet frame **byte by byte** to the **AXI4-Stream Data FIFO** interface.
 
 <div style="text-align: center;">
-    <img src="./.images/Ethernet_block.jpg" alt="OSI Model"/>
+    <img src="./.images/Ethernet_block.jpg" alt="Ethernet Block"/>
 </div>
 
 #### 🔁 Ethernet Interface Summary
@@ -232,6 +300,14 @@ The following table summarizes all input and output ports of the `ethernet_gener
 
 #### 🧠 FSM State Encoding
 
+The following illustration provides a visual representation of the FSM implemented in the Ethernet block.
+
+<div style="text-align: center;">
+    <img src="./.images/FSM_Ethernet.svg" alt="Ethernet FSM" width="550px" height="1100px"/>
+</div>
+
+The table below can be used for debugging purposes, as it provides the state codes and their descriptions.
+
 <div style="text-align: center;">
 
 | State Name        | Code (`state_dbg`) | Description                                               |
@@ -250,7 +326,7 @@ The following table summarizes all input and output ports of the `ethernet_gener
 
 </div>
 
-> ⚠️ **Important:** To avoid data loss, the Ethernet block only transmits bytes when the `tready` signal is asserted (`'1'`). Some states — such as `WAITING`, `START`, `DONE`, and `RESET` — are used primarily for debugging and structural clarity. However, these states may introduce additional latency and slightly reduce the overall performance of the sender. 
+> ⚠️ **Important:** To avoid data loss, the Ethernet block only transmits bytes when the `tready` signal is asserted (`'1'`). Some states — such as `WAITING`, `START`, `DONE`, and `RESET` — are used primarily for debugging and structural clarity. However, these states may introduce additional latency and slightly reduce the overall performance of the sender. The counter is always initialized to `0`.
 
 > ⚠️ **Important:** All states related to the Ethernet header are controlled by a counter. However, once the FSM reaches the `ENABLE_PROTOCOL` and `DATA` states, state transitions are driven by the `prtcl_on_off` signal, which indicates whether the Internet Protocol block has finished sending the packet.
 
@@ -258,13 +334,16 @@ The following table summarizes all input and output ports of the `ethernet_gener
 
 > 🔦 **Tip:** The `WAITING` state is not strictly necessary, but it can be helpful for debugging and observing the timing behavior of the system. You can also change the value of the generic parameter `N` in the `timer` component to increase or decrease the delay duration.
 
+> 🔍 **For more details** about the outputs in each state, please refer to the **source code**.
+
+## 📱 Network Layer
 
 ### 🧱 IP Block
 
 This block, also implemented in VHDL, contains a FSM responsible for sending an IP+UDP packet. The following sections provide a brief overview of its ports and internal states.
 
 <div style="text-align: center;">
-    <img src="./.images/IP_Block.jpg" alt="OSI Model"/>
+    <img src="./.images/IP_Block.jpg" alt="IP Block"/>
 </div>
 
 #### 🔁 IP Block Interface Summary
@@ -294,6 +373,14 @@ This table summarizes the input and output ports of the IP block.
 
 #### 🧠 IP Block FSM State Encoding
 
+The diagram below shows the state transitions of the IP FSM.
+
+<div style="text-align: center;">
+    <img src="./.images/FSM_IP.svg" alt="IP FSM" width="550px" height="1100px"/>
+</div>
+
+The table below lists each state code and its description for debugging purposes.
+
 | State Name        | Code (`state_dbg`) | Description                                                             |
 |-------------------|--------------------|-------------------------------------------------------------------------|
 | `START`           | `00001`            | Initial state before loading input values                               |
@@ -315,10 +402,16 @@ This table summarizes the input and output ports of the IP block.
 | `RESET`           | `01111`            | Resets internal state                                                   |
 | `DONE`            | `10000`            | Marks end of IP packet transmission                                     |
 
+> ‼️ **Attention:** The FSM will only start or transition between states when both the `rst` and `en` signals are set to `'1'`. The counter is always initialized to `0`.
+
+> 🔍 **For more details** about the outputs in each state, please refer to the **source code**.
+
+## 🚚 Transport Layer
+
 ### 🧱 UDP Block
 
 <div style="text-align: center;">
-    <img src="./.images/UDP_block.jpg" alt="OSI Model"/>
+    <img src="./.images/UDP_block.jpg" alt="UDP Block"/>
 </div>
 
 #### 🔁 In/Out Ports
@@ -344,6 +437,14 @@ This table summarizes the input and output ports of the IP block.
 
 #### 🧠 FSM State Encoding
 
+The state diagram below shows the various states and the transitions between them.
+
+<div style="text-align: center;">
+    <img src="./.images/FSM_UDP.svg" alt="UDP FSM" width="500px" height="600px"/>
+</div>
+
+You’ll also find a summary of each state and its corresponding code in the table below.
+
 <div style="text-align: center;">
 
 | State Name         | Code (`state_dbg`) | Description                                               |
@@ -359,6 +460,57 @@ This table summarizes the input and output ports of the IP block.
 | `DONE`             | `1001`             | Indicates completion of the frame, goes back to START     |
 
 </div>
+
+> ‼️ **Attention:** The FSM will only start or transition between states when both the `rst` and `en` signals are set to `'1'`. The counter is always initialized to `0`.
+
+> 🔍 **For more details** about the outputs in each state, please refer to the **source code**.
+
+## 🔚 Conclusion
+
+### 🧪 Tests and Results
+
+#### 📋 Configuration Summary
+
+<div style="text-align: center;">
+
+| **Field**         | **Value**                                 | **Description**               |
+|-------------------|-------------------------------------------|-------------------------------|
+| **Ethernet Header** |                                           |                               |
+| Destination MAC   | `FF:FF:FF:FF:FF:FF`                        | Broadcast address             |
+| Source MAC        | `00:0A:35:00:00:01`                        | Device MAC                    |
+| Type              | `0800`                                     | IPv4 Protocol                 |
+| **IP Header**     |                                            |                               |
+| Version + IHL     | `45`                                       | IPv4                          |
+| Service Type      | `00`                                       | Standard                      |
+| Total Length      | `0028`                                     | 40 bytes                      |
+| Identification    | `0001`                                     | Packet ID                     |
+| Flags + Frag. Off.| `4000`                                     | Don't fragment                |
+| TTL               | `40`                                       | Time To Live = 64             |
+| Protocol          | `11`                                       | UDP                           |
+| Header Checksum   | `B768`                                     | Checksum                      |
+| Source IP         | `C0A80109`                                 | 192.168.1.9                   |
+| Destination IP    | `C0A80102`                                 | 192.168.1.2                   |
+| **UDP Header**     |                                           |                               |
+| Source Port       | `1F40`                                     | 8000                          |
+| Destination Port  | `1F40`                                     | 8000                          |
+| Length            | `0013`                                     | 20 bytes (8 header + 11 data) |
+| Checksum          | `0000`                                     | (Optional, 0 = not used)      |
+| Payload (Data)    | `48656C6C6F20576F726C64`                   | "Hello World" in ASCII        |
+
+</div>
+
+#### 🎁 Results
+
+Using **Wireshark**, I was able to verify that the **Ethernet frames** are indeed being received. However, as I will explain in the next section, my project behaves like a **UDP machine gun** — it continuously fires a high volume of UDP frames. As a result, at some point, packet loss inevitably occurs.
+
+<div style="text-align: center;">
+    <img src="./.images/Wireshark_result.png" alt="Wireshark"/>
+</div>
+
+> **My FPGA sending Ethernet frames like it's the last day on Earth** 🌍📨💣
+> <div style="text-align: center;">
+>    <img src="./.images/UDP_Machine_Gun.gif" alt="Machine Gun"/>
+></div>
 
 ### ❗Bugs and Limitations
 
@@ -401,3 +553,5 @@ Almost every signal in the design can be used for debugging, but the following o
 - `on_off` — Active flag indicating if the block is transmitting
 
 > ⚠️ **Tip:** Always monitor the `reset` signal for all blocks. To trigger the ILA, you can use the `tlast` signal from the AXI FIFO — just be sure to configure the ILA properly for your debug needs.
+
+💌 Hey, you made it this far? Drop me a message at alanlimamemdeiross@gmail.com – just to prove this README wasn't written in vain! 😄
